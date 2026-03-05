@@ -47,6 +47,12 @@ How to use Project Creator to build AI companions through reverse prompting. Thi
 /build [client/companion]                         Build specific companion
 ```
 
+### Kit Management
+```
+/capture-capability public [name] [description]   Extract capability to public kits
+/capture-capability client [name] [description]   Extract capability to client kit
+```
+
 ---
 
 ## The Companion Lifecycle
@@ -274,7 +280,7 @@ All skills operate on the current companion by default. You can override with an
 
 | Project | Relationship |
 |---------|-------------|
-| **Companion kits** | Reusable building blocks (personas, capabilities) that Project Creator composes into companions. Public kits committed; private kits git-ignored. |
+| **Companion kits** | Reusable building blocks (personas, capabilities) that Project Creator composes into companions. Public kits committed; private kits git-ignored. Use `/capture-capability` to extract patterns from built companions into kits. |
 | **Built companions** | Each companion is an independent Claude Code project with its own git repo, CLAUDE.md, skills, agents, and rules. |
 | **Linear** | Tracks build execution. Each `/build` run creates/updates tickets in Linear. |
 | **Methodology** | `methodology.md` is the deep reference for reverse prompting, failure recovery, and meta-project patterns. |
@@ -301,4 +307,4 @@ When reverse prompting: one question at a time. Challenge vagueness. Push for co
 
 ---
 
-**Last Updated**: March 3, 2026
+**Last Updated**: March 4, 2026
