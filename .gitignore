@@ -49,6 +49,9 @@ project-types/public/*/reference-projects.md
 # Personal settings — not shared across machines or users.
 .workbench/
 
+# Shared local data (not for version control)
+.shared/
+
 # =============================================================================
 # USER-SPECIFIC / LOCAL FILES
 # =============================================================================
