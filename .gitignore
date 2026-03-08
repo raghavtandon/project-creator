@@ -52,6 +52,9 @@ project-types/public/*/reference-projects.md
 # Shared local data (not for version control)
 .shared/
 
+# Knowledge Explorer domain config (user-specific domain registry)
+.knowledge/
+
 # =============================================================================
 # USER-SPECIFIC / LOCAL FILES
 # =============================================================================
