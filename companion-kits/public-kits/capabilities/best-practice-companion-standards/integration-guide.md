@@ -8,17 +8,39 @@ How to bring a companion up to the ecosystem baseline — companion guide, unive
 
 For an existing companion that has none of the standard infrastructure:
 
-1. **Copy the three universal skills** from the reference implementation
-2. **Create a fitted `/brief`** using the template below
-3. **Create a fitted `/checkpoint`** using the template below
-4. **Create `companion-guide.md`** following the companion-guide capability
-5. **Update CLAUDE.md** to list the new skills
+1. **Copy the universal rules** into `.claude/rules/`
+2. **Copy the three universal skills** from the reference implementation
+3. **Create a fitted `/brief`** using the template below
+4. **Create a fitted `/checkpoint`** using the template below
+5. **Create `companion-guide.md`** following the companion-guide capability
+6. **Update CLAUDE.md** to list the new skills
 
 This gets the companion connected to the ecosystem. Refinement happens through use.
 
 ---
 
-## Step 1: Copy Universal Skills
+## Step 1: Copy Universal Rules
+
+Universal rules are identical across all companions. Create them in the companion's `.claude/rules/` directory.
+
+**Create `.claude/rules/knowledge-domains.md`:**
+
+```markdown
+When the user references a location you don't recognize (e.g., "client files", "knowledge", "look in X for..."),
+read the `.knowledge/config.json` file at the project-creator root to resolve it.
+
+That file maps domain labels to filesystem paths. Match the user's reference against domain labels
+and use the corresponding path for your search.
+
+Project-creator root: find it by traversing parent directories from the companion until you find CLAUDE.md
+with "# Project Creator" at the top, or use the path from .workbench/config.json's pcDirectoryPath.
+```
+
+**No customization needed.** The rule works in any companion without modification.
+
+---
+
+## Step 2: Copy Universal Skills
 
 The three universal skills are identical across all companions. Copy them from the Knowledge Explorer companion (the open-source reference implementation).
 
@@ -40,7 +62,7 @@ The three universal skills are identical across all companions. Copy them from t
 
 ---
 
-## Step 2: Create Fitted /brief
+## Step 3: Create Fitted /brief
 
 The `/brief` skill reads current state, synthesizes, and recommends what to work on. The structure is standard; the content is fitted to the companion's domain.
 
@@ -121,7 +143,7 @@ If the user has a different priority, follow their lead.
 
 ---
 
-## Step 3: Create Fitted /checkpoint
+## Step 4: Create Fitted /checkpoint
 
 The `/checkpoint` skill captures session state before leaving. The structure is standard; the tracking files and insight format are fitted.
 
@@ -203,7 +225,7 @@ Report what was captured:
 
 ---
 
-## Step 4: Create companion-guide.md
+## Step 5: Create companion-guide.md
 
 Follow the **companion-guide capability** (`companion-kits/public-kits/capabilities/companion-guide/`) for structure and standards. The integration guide there provides:
 
@@ -226,7 +248,7 @@ The companion guide must include an **Ecosystem Maturation** section in the Comm
 
 ---
 
-## Step 5: Update CLAUDE.md
+## Step 6: Update CLAUDE.md
 
 Add the new skills to the companion's CLAUDE.md. Follow the existing structure — most companions have a phases table or skills list.
 
@@ -250,6 +272,7 @@ Update the skills count if the CLAUDE.md tracks it.
 
 | Surface | What Gets Added | Notes |
 |---------|----------------|-------|
+| `.claude/rules/` | 1 universal rule (knowledge-domains.md) | Copied from capability prototype |
 | `.claude/skills/` | 5 skill directories (3 universal + 2 fitted) | Universal skills are copied; fitted skills are created |
 | `companion-guide.md` | New file at project root | Follows companion-guide capability standards |
 | `CLAUDE.md` | Updated phases/skills table | Ecosystem Maturation phase + cross-cutting /ask |
@@ -295,6 +318,8 @@ Has 17 domain skills but no companion guide, no `/brief`, no `/checkpoint`, no u
 
 Use this when running `/apply-capability best-practice-companion-standards` against a companion:
 
+- [ ] `knowledge-domains.md` **rule exists** in `.claude/rules/` — if not, create per Step 1
+- [ ] `knowledge-domains.md` **matches capability prototype** — no unauthorized customization
 - [ ] **companion-guide.md exists** — if not, create per companion-guide capability
 - [ ] **companion-guide.md follows standard section order** — command quick reference first
 - [ ] **companion-guide.md includes Ecosystem Maturation commands** in quick reference

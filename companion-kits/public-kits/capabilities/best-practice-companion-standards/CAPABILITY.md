@@ -37,6 +37,16 @@ Every companion must have a `companion-guide.md` at its project root following t
 
 The companion-guide capability defines the section order, formatting standards, and quality checklists. This capability does not redefine those standards — it requires their application.
 
+### Universal Rules (Identical Across Companions)
+
+These rules do not vary between companions. They serve the ecosystem, not the individual companion's domain. Copy them as-is into each companion's `.claude/rules/`; do not customize.
+
+| Rule | Purpose | Why Universal |
+|------|---------|---------------|
+| `knowledge-domains.md` | When a user references an unknown location, check `.knowledge/config.json` at the project-creator root for domain paths | Domain resolution is the same mechanism everywhere — all companions need to find client files, knowledge bases, and other shared resources |
+
+**Source of truth:** The rule prototype lives in this capability. When the rule is updated here, propagate changes to all companions.
+
 ### Universal Skills (Identical Across Companions)
 
 These skills do not vary between companions. They serve the ecosystem, not the individual companion's domain. Copy them as-is; do not customize.
