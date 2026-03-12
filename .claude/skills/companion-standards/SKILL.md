@@ -179,7 +179,7 @@ Tickets in `docs/plans/tickets.yaml` follow this exact schema. Field names are s
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `id` | integer | yes | Sequential: 1, 2, 3... |
-| `linear_id` | string | no | Linear identifier: "CON-XX". Omit if Linear not configured |
+| `linear_id` | string | no | Linear identifier: "TEAM-XX". Omit if Linear not configured |
 | `title` | string | yes | Imperative: "Build X", "Create Y" |
 | `size` | string | yes | "S" or "M" only |
 | `status` | string | yes | pending, in_progress, completed, skipped |
@@ -194,7 +194,7 @@ Tickets in `docs/plans/tickets.yaml` follow this exact schema. Field names are s
 ```yaml
 tickets:
   - id: 1
-    linear_id: "CON-44"
+    linear_id: "TEAM-44"
     title: "Create project CLAUDE.md"
     size: "S"
     status: "pending"
@@ -217,7 +217,7 @@ tickets:
 ```yaml
 tickets:
   - Id: 1                    # Wrong: camelCase, should be snake_case
-    linearId: "CON-44"       # Wrong: camelCase (use linear_id or omit)
+    linearId: "TEAM-44"       # Wrong: camelCase (use linear_id or omit)
     Title: "Creating X"      # Wrong: gerund, should be imperative
     size: "L"                # Wrong: only S or M allowed
     blockedBy: []            # Wrong: camelCase, should be blocked_by

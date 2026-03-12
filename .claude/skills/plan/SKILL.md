@@ -419,26 +419,25 @@ Before finalizing, present the complete plan:
 
 ---
 
-**Review this plan before I finalize tickets.**
+**Review this plan before I create Linear tickets.**
 
 Questions:
 1. Does the scope look right?
 2. Any missing pieces?
 3. Should any tickets be combined or split further?
-4. Would you like to track these in Linear? If so, which project?
+4. Which Linear project should I use? (Or should I create a new one?)
+   *(If you're not using Linear, say "skip Linear")*
 ```
 
 **Wait for user approval before proceeding to Step 9.**
 
 ---
 
-## Phase 4: Gate -- Finalize Tickets
+## Phase 4: Gate -- Write to Linear and Finalize
 
-### Step 9: Create Tickets (and optionally sync to Linear)
+### Step 9: Write to Linear
 
 After user approves:
-
-**If user wants Linear tracking:**
 
 1. **Get/create Linear project:**
    - Ask user which Linear project to use
@@ -459,7 +458,7 @@ After user approves:
    - Tickets with no dependencies get higher priority
    - Follow the execution sequence
 
-**If user does NOT want Linear tracking:** Skip steps 1-4 above. Omit `linear_parent_issue` and `linear_id` fields from tickets.yaml.
+**If user opted out of Linear** (said "skip Linear"): Skip steps 1-4 above. Omit `linear_parent_issue` and `linear_id` fields from tickets.yaml.
 
 5. **Create local tickets file:**
 
@@ -475,11 +474,11 @@ After user approves:
    project_name: "[human-readable project name]"
    project_path: "/absolute/path/to/companions/[client]/[companion]"
    spec_file: "docs/plans/YYYY-MM-DD-implementation-spec.md"
-   linear_parent_issue: "CON-XX"  # Omit if not using Linear
+   linear_parent_issue: "TEAM-XX"  # Omit if not using Linear
 
    tickets:
      - id: 1
-       linear_id: "CON-XX"  # Omit if not using Linear
+       linear_id: "TEAM-XX"  # Omit if not using Linear
        title: "Ticket title"
        size: "S"
        status: "pending"
@@ -496,7 +495,7 @@ After user approves:
          - "Second criterion -- specific and verifiable"
 
      - id: 2
-       linear_id: "CON-XX"  # Omit if not using Linear
+       linear_id: "TEAM-XX"  # Omit if not using Linear
        title: "Second ticket"
        size: "M"
        status: "pending"
@@ -540,8 +539,8 @@ After user approves:
 
 ```
 Phase 4 Complete. Collected values:
-- Linear parent issue: [CON-XX or "not using Linear"]
-- Linear child issues: [list CON-XX IDs or "N/A"]
+- Linear parent issue: [TEAM-XX, or "skipped" if not using Linear]
+- Linear child issues: [list TEAM-XX IDs, or "skipped" if not using Linear]
 - tickets.yaml written: [path]
 - build-progress.md written: [path]
 - Schema compliance: VERIFIED
@@ -560,14 +559,14 @@ After tickets are created:
 
 **Spec:** docs/plans/YYYY-MM-DD-implementation-spec.md
 
-**Linear Project:** [Project name with link, or "Not using Linear"]
+**Linear Project:** [Project name with link]
 
 **Tickets created:** [N] tickets
 
 | # | Ticket | Size | Status | Linear |
 |---|--------|------|--------|--------|
-| 1 | [Title] | S | Ready | [ABC-123](url) or N/A |
-| 2 | [Title] | M | Blocked by 1 | [ABC-124](url) or N/A |
+| 1 | [Title] | S | Ready | [ABC-123](url) |
+| 2 | [Title] | M | Blocked by 1 | [ABC-124](url) |
 ...
 
 **Execution order:**
@@ -588,7 +587,7 @@ After tickets are created:
 **Ready for `/build` when you want to start implementation.**
 
 Next steps:
-- Review tickets (in Linear if configured)
+- Review tickets in Linear
 - Adjust priorities if needed
 - Run `/build` to start executing tickets
 ```
