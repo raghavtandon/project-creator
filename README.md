@@ -8,112 +8,594 @@ git clone git@github.com:Consortium-team/project-creator.git
 
 **The solution:** Project Creator creates AI companions — Claude Code projects composed from reusable personas, capabilities, and domain knowledge. It uses reverse prompting to draw out your requirements through structured conversation, then generates the Claude Code configuration artifacts: `CLAUDE.md`, `README.md`, skills, and agents. You seed requirements, cultivate them into an implementation plan, then shape the final companion — transforming ad-hoc setup into repeatable, scalable companion creation.
 
-**What's new:** [v2.0 — Three-Layer Architecture](docs/release-notes.md) — Companions are now more reliable and token-efficient. Instructions are distributed across a reliability hierarchy so the right guidance shows up at the right time. New companions get this automatically; existing companions can upgrade via `/onboard`.
+---
+
+## Setup
+
+**When you're done with setup, you'll have:**
+- Companion Workbench — a desktop app for managing and running companions
+- Knowledge Workbench — a desktop app for browsing and exploring your knowledge library
+- A Project Creator directory connected to both, ready to create your first companion
+
+**Time needed:** About 45 minutes for first-time setup.
+
+### Phase 1: Prerequisites
+
+Before you can use Project Creator, you'll need to install a few tools. This section walks you through each one step by step.
 
 ---
 
-## Prerequisites
+#### 1.1 Open a Terminal
 
-### Required
+A terminal is a text-based way to give your computer instructions. You'll type (or paste) commands and press Enter to run them. Throughout this guide, when we say "paste this into your terminal," we mean: copy the text, click inside the terminal window, paste, and press Enter.
 
-- **Git & GitHub** — You'll need Git installed and GitHub configured to use Project Creator. **New to Git?** See our [Getting Up to Speed on GitHub](docs/guides/getting-up-to-speed-on-github/) guide (2-3 hours for setup; includes quick-start option).
-- **Clone this repository** — Clone (or fork and clone) the project-creator repo to a local directory
-- **Claude Code** — This project is designed to run inside Claude Code or a Claude cowork task.
-- **Linear MCP** — The `/plan` and `/build` commands create and read tickets from Linear. See [Linear's MCP setup guide](https://linear.app/docs/mcp) for configuration instructions.
-- **First-time setup** — Run `/configure` after cloning to set your default organization and verify your environment is ready.
+<details>
+<summary><strong>macOS</strong></summary>
 
-### Linear Setup
+Press **Cmd + Space** on your keyboard. A search bar appears in the center of your screen — this is called Spotlight. Type `Terminal` and press **Enter**.
 
-Project Creator uses [Linear](https://linear.app) as the external memory for implementation plans. The Cultivation and Shaping phases require Linear MCP to be configured.
+A window will open with a blinking cursor. This is your terminal. You'll use it for many of the steps in this guide.
 
-1. Install the Linear MCP server in your Claude Code configuration (see [Linear MCP docs](https://linear.app/docs/mcp))
-2. Authenticate with your Linear workspace
-3. Create a Linear project for tracking Project Creator work (or use an existing one)
+**Keep it handy:** Right-click the Terminal icon that appeared in your Dock (the bar of icons at the bottom of your screen) and select **Options > Keep in Dock**. That way you can click it anytime instead of searching again.
 
-Without Linear, you can still use the Seeding phase commands (`/intake`, `/onboard`, `/process`, `/gaps`, `/checkpoint`), but `/plan` and `/build` will not function.
+</details>
 
-### Nice to Have
+<details>
+<summary><strong>Windows</strong></summary>
 
-- **[Granola.ai](https://granola.ai)** — AI meeting notes tool. With the Granola MCP configured, you can feed meeting transcripts directly into Project Creator using prompts like `/process the Granola transcript from yesterday with [client name]`. Not required, but useful if your companion requirements live in meeting conversations. See [Granola MCP setup instructions](https://docs.granola.ai/help-center/sharing/integrations/mcp#claude-code).
+Windows doesn't come with the right kind of terminal for this guide, but you'll get one automatically when you install Git in the next step. After installing Git (step 1.2), you'll use an app called **Git Bash** as your terminal.
+
+For now, just move on to step 1.2.
+
+</details>
 
 ---
 
-## Quick Start (for usage within a Claude Cowork task)
+#### 1.2 Install Git
 
-We recommend using a Claude Cowork task for the Seeding and Cultivation phases (`/intake`, `/process`, `/gaps`, `/plan`), then switching to Claude Code for the Shaping phase (`/build`). Cowork's conversational interface is well-suited for the back-and-forth of requirements gathering and planning, while Claude Code's tool access makes it more reliable for build execution.
+Git is a tool that tracks changes to files — like a detailed undo history for your entire project. You'll need it to download Project Creator and to save your work.
 
-Cowork tasks run in a separate environment where Claude doesn't automatically read your project configuration. You need to explicitly tell it to orient itself first.
+<details>
+<summary><strong>macOS</strong></summary>
 
-### Setting Up
+In your Terminal window, paste this and press Enter:
+
+```bash
+git --version
+```
+
+One of two things will happen:
+
+**You see a version number** (something like `git version 2.39.0`) — Git is already installed. You're done with this step.
+
+**A popup appears asking to install "Command Line Developer Tools"** — This is normal. Click **Install**. A progress bar will appear — this download can take 5-10 minutes depending on your internet speed. When it finishes, click **Done**.
+
+After the install finishes, go back to your Terminal and run the same command again to confirm:
+
+```bash
+git --version
+```
+
+You should now see a version number.
+
+</details>
+
+<details>
+<summary><strong>Windows</strong></summary>
+
+1. Open your web browser and go to [git-scm.com/downloads/win](https://git-scm.com/downloads/win)
+2. The download should start automatically. If it doesn't, click the download link for **64-bit Git for Windows Setup**
+3. Find the downloaded file (usually in your Downloads folder) and double-click it to run the installer
+4. **Click Next on every screen** — the default options are fine. Don't change anything. Just keep clicking Next until you reach **Install**, then click that too.
+5. When installation finishes, click **Finish**
+
+Now open your terminal. Click the **Start** button (the Windows icon in the bottom-left corner of your screen), type `Git Bash`, and click the app that appears. A dark window with a blinking cursor will open — this is your terminal for the rest of this guide.
+
+**Keep it handy:** Right-click the Git Bash icon in your taskbar (the bar at the bottom of your screen) and select **Pin to taskbar**.
+
+Verify Git is installed by pasting this into Git Bash and pressing Enter:
+
+```bash
+git --version
+```
+
+You should see a version number (like `git version 2.47.0`).
+
+</details>
+
+---
+
+#### 1.3 Install Claude Code
+
+Claude Code is the AI engine that powers your companions. You'll install it using a command in your terminal.
+
+For the full reference, see [code.claude.com/docs](https://code.claude.com/docs). The install commands are below.
+
+<details>
+<summary><strong>macOS</strong></summary>
+
+Paste this into your Terminal and press Enter:
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+You'll see a lot of text scroll by — that's normal. The installer is downloading and setting up Claude Code.
+
+**Important — look for a line that starts with `echo`.** Near the end of the output, you may see a line that looks something like this:
+
+```
+echo 'export PATH="/Users/yourname/.claude/bin:$PATH"' >> ~/.zshrc
+```
+
+**Do not copy the example above — it won't work for you.** The line in YOUR terminal will have your actual username and file paths. Find the `echo` line in your own terminal output, select and copy that one, paste it back into your terminal, and press Enter. This tells your computer where to find Claude Code. If you skip this step, the Companion Workbench and Knowledge Workbench won't be able to find Claude later.
+
+After running the `echo` line, **close your Terminal window and open a new one** (Cmd+Space, type `Terminal`, press Enter). This is needed for the change to take effect.
+
+In the new Terminal window, verify Claude Code is installed:
+
+```bash
+claude --version
+```
+
+You should see a version number. **If you see "command not found"**, go back and make sure you ran the `echo` line and opened a new Terminal window.
+
+The first time you run `claude`, you'll be asked to log in to your Anthropic account. Follow the prompts in your browser to complete this.
+
+</details>
+
+<details>
+<summary><strong>Windows</strong></summary>
+
+Paste this into Git Bash and press Enter:
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+You'll see a lot of text scroll by — that's normal. The installer is downloading and setting up Claude Code.
+
+**Important — look for a line that starts with `echo`.** Near the end of the output, you may see a line that looks something like this:
+
+```
+echo 'export PATH="/c/Users/yourname/.claude/bin:$PATH"' >> ~/.bashrc
+```
+
+The exact text will be different for you — that's fine. **You need to run this line.** Copy the entire `echo '...'` line, paste it into Git Bash, and press Enter. This tells your computer where to find Claude Code. If you skip this step, the Companion Workbench and Knowledge Workbench won't be able to find Claude later.
+
+After running the `echo` line, **close your Git Bash window and open a new one** (Start menu, type `Git Bash`). This is needed for the change to take effect.
+
+In the new Git Bash window, verify Claude Code is installed:
+
+```bash
+claude --version
+```
+
+You should see a version number. **If you see "command not found"**, go back and make sure you ran the `echo` line and opened a new Git Bash window.
+
+The first time you run `claude`, you'll be asked to log in to your Anthropic account. Follow the prompts in your browser to complete this.
+
+</details>
+
+---
+
+#### 1.4 Create a GitHub Account
+
+GitHub is where your companion code will be stored online. If you already have a GitHub account, skip to step 1.5.
+
+1. Go to [github.com](https://github.com) in your browser
+2. Click **Sign up**
+3. Follow the prompts to create a free account
+4. Verify your email address when GitHub sends you a confirmation email
+
+---
+
+#### 1.5 Set Up SSH Keys
+
+SSH keys are like a secret handshake between your computer and GitHub. Instead of typing your password every time you upload or download code, your computer proves who it is automatically.
+
+You'll create a key pair — a private key (stays on your computer, never share it) and a public key (you give this to GitHub).
+
+<details>
+<summary><strong>macOS</strong></summary>
+
+**Create the key pair.** Paste this into your Terminal — replace `your-email@example.com` with the email you used for your GitHub account:
+
+```bash
+ssh-keygen -t ed25519 -C "your-email@example.com"
+```
+
+You'll see three prompts. **Press Enter on each one without typing anything:**
+
+1. **"Enter file in which to save the key"** — Just press Enter.
+2. **"Enter passphrase"** — Just press Enter (leave it empty — no password needed).
+3. **"Enter same passphrase again"** — Just press Enter again.
+
+**Give GitHub your public key.** Run this to copy your public key to your clipboard:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | pbcopy
+```
+
+Nothing will appear to happen — that's normal. Your key has been copied and is ready to paste.
+
+Now go to [github.com/settings/keys](https://github.com/settings/keys) in your browser:
+
+1. Click the green **New SSH key** button
+2. **Title:** type something like `My Mac`
+3. **Key:** click in the big text box and paste (**Cmd+V**)
+4. Click **Add SSH key**
+5. GitHub may ask you to confirm your password
+
+</details>
+
+<details>
+<summary><strong>Windows</strong></summary>
+
+**Create the key pair.** Paste this into Git Bash — replace `your-email@example.com` with the email you used for your GitHub account:
+
+```bash
+ssh-keygen -t ed25519 -C "your-email@example.com"
+```
+
+You'll see three prompts. **Press Enter on each one without typing anything:**
+
+1. **"Enter file in which to save the key"** — Just press Enter.
+2. **"Enter passphrase"** — Just press Enter (leave it empty — no password needed).
+3. **"Enter same passphrase again"** — Just press Enter again.
+
+**Give GitHub your public key.** Run this to copy your public key to your clipboard:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | clip
+```
+
+Nothing will appear to happen — that's normal. Your key has been copied and is ready to paste.
+
+Now go to [github.com/settings/keys](https://github.com/settings/keys) in your browser:
+
+1. Click the green **New SSH key** button
+2. **Title:** type something like `My Windows PC`
+3. **Key:** click in the big text box and paste (**Ctrl+V**)
+4. Click **Add SSH key**
+5. GitHub may ask you to confirm your password
+
+</details>
+
+---
+
+#### 1.6 GitHub Organization
+
+An organization is a shared space on GitHub where all your companion code will live. Think of it like a folder for your projects on GitHub.
+
+**If your company already has a GitHub organization**, you don't need to create a new one. Contact your company's GitHub administrator and ask them to invite you to the organization. Once you've accepted the invitation, you're done with this step.
+
+**If you need to create a new organization:**
+
+1. Go to [github.com/organizations/plan](https://github.com/organizations/plan) in your browser
+2. Under the **Free** option, click **Create a free organization**
+3. **Organization account name:** We recommend `[yourname]-companions` (for example, `jane-companions`)
+4. **Contact email:** Use your email address
+5. Choose **My personal account** when asked who the organization belongs to
+6. Follow the remaining prompts — you can skip adding other people for now
+
+---
+
+#### Checkpoint: Verify Everything Connects
+
+Let's make sure your computer can talk to GitHub. In your terminal (Terminal on macOS, Git Bash on Windows), paste this and press Enter:
+
+```bash
+ssh -T git@github.com
+```
+
+**If this is the first time connecting**, you'll see a message asking "Are you sure you want to continue connecting?" Type `yes` and press Enter.
+
+You should then see: `Hi [your-username]! You've successfully authenticated, but GitHub does not provide shell access.`
+
+That message means everything is working. The "does not provide shell access" part is normal — it's just GitHub confirming your identity.
+
+**If you see "Permission denied"**, go back and check steps 1.5 (SSH keys). The most common issue is that the public key wasn't pasted correctly into GitHub.
+
+---
+
+### Phase 2: Project Creator
+
+#### 2a. Choose a Home Directory
+
+First, decide where on your computer you want to keep Project Creator and your knowledge files. We recommend your **Documents** folder. In your terminal, navigate there:
+
+**macOS:**
+```bash
+cd ~/Documents
+```
+
+**Windows (Git Bash):**
+```bash
+cd ~/Documents
+```
+
+`cd` means "change directory" — it's how you move to a different folder in the terminal. Everything you do next will happen inside Documents.
+
+#### 2b. Clone the Repository
+
+Now download Project Creator. Paste this into your terminal and press Enter:
+
+```bash
+git clone git@github.com:Consortium-team/project-creator.git
+```
+
+**The first time you connect to GitHub**, you'll see a message like this:
+
+```
+The authenticity of host 'github.com' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wv...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+**You must type `yes` and press Enter.** Don't just press Enter — the default is "no" and the clone will fail. Type the word `yes`.
+
+After that, Git will download the project. When it finishes, you'll have a `project-creator` folder inside your Documents folder.
+
+#### 2c. Create Your Knowledge Directory
+
+This is where your knowledge library files will live. Create it next to the project-creator folder:
+
+```bash
+mkdir -p ~/Documents/knowledge
+```
+
+You now have two folders inside Documents:
+- `Documents/project-creator/` — the Project Creator system
+- `Documents/knowledge/` — your knowledge library
+
+#### Checkpoint
+
+Let's verify the clone worked. Paste this into your terminal:
+
+```bash
+ls ~/Documents/project-creator/CLAUDE.md
+```
+
+You should see the file path printed back to you. If you see "No such file or directory," the clone in step 2b may not have completed — try running the `git clone` command again from step 2b.
+
+---
+
+### Phase 3: Companion Workbench
+
+The Companion Workbench is a desktop app for managing companions and running Claude Code sessions.
+
+#### 3a. Download and Install
+
+<details>
+<summary><strong>macOS</strong></summary>
+
+1. Download the Companion Workbench installer: **[Companion Workbench for macOS](https://github.com/Consortium-team/project-creator/releases/download/workbench-v0.1.0/Companion.Workbench-0.1.0-arm64.dmg)**
+
+   > **Older Mac?** If your Mac is from before 2020 (Intel processor instead of Apple Silicon), you may need a different version. Check the [releases page](https://github.com/Consortium-team/project-creator/releases) for an x64 build.
+
+2. Find the downloaded file — it will be in your Downloads folder, named something like `Companion.Workbench-0.1.0-arm64.dmg`. Double-click it to open.
+
+3. A window will appear showing the Companion Workbench icon and an Applications folder. **Drag the Companion Workbench icon onto the Applications folder.** This copies the app to your computer.
+
+4. Close the installer window.
+
+5. Open the app: go to your Applications folder (in Finder, click **Go > Applications** in the menu bar), find **Companion Workbench**, and **right-click it** (or hold the Control key and click it). Select **Open** from the menu that appears.
+
+   > **Why right-click?** macOS blocks apps from unrecognized developers on first launch. Right-clicking and choosing Open tells macOS you trust this app. You only need to do this once — after the first time, you can open it normally by double-clicking.
+
+6. If you see a dialog asking "Are you sure you want to open it?", click **Open**.
+
+</details>
+
+<details>
+<summary><strong>Windows</strong></summary>
+
+1. Download the Companion Workbench installer: **[Companion Workbench for Windows](https://github.com/Consortium-team/project-creator/releases/download/workbench-v0.2.0/Companion.Workbench-0.2.0-x64-setup.exe)**
+
+2. Find the downloaded file — it will be in your Downloads folder, named something like `Companion.Workbench-0.2.0-x64-setup.exe`. Double-click it to run.
+
+3. **Windows SmartScreen may show a warning** — a blue window that says "Windows protected your PC." This is normal for new apps. Click **More info**, then click **Run anyway**.
+
+4. Follow the installer prompts — the defaults are fine, just keep clicking **Next** until it finishes.
+
+5. The app should launch automatically after installation. If it doesn't, find **Companion Workbench** in your Start menu and click it.
+
+</details>
+
+#### 3b. Configure Project Creator Directory
+
+When Companion Workbench opens for the first time, it will ask you to choose your Project Creator directory. This is the folder you downloaded in Phase 2.
+
+1. Click the **Choose Directory** button (or similar — the exact wording may vary)
+2. Navigate to your **Documents** folder
+3. Select the **project-creator** folder inside it
+4. Click **Choose** (or **Select Folder** on Windows)
+
+#### 3c. Run First-Time Configuration
+
+Now you need to run the Project Creator setup inside Companion Workbench.
+
+1. Look at the navigation tree on the left side of the window. Move your mouse over **Project Creator** and click on it.
+
+2. When you hover over Project Creator, you'll see three small colored buttons appear — **green**, **yellow**, and **red**. These control how much permission Claude has. **Click the yellow button.** (Yellow gives Claude enough permissions to set things up without needing to ask you for approval on every step.)
+
+3. A terminal session will open on the right side of the window. You'll see text start to appear — Claude is starting up.
+
+4. **If this is your first time using Claude Code**, Claude will ask you some introductory questions before you can start — things like agreeing to terms and selecting preferences. Read each prompt and follow the instructions until Claude is ready and waiting for your input. You'll know it's ready when you see a blinking cursor where you can type.
+
+5. Once Claude is ready, type this and press Enter:
+
+```
+/configure
+```
+
+6. Follow the prompts — Claude will walk you through setting up your default organization and verifying your environment. Answer the questions as they come up.
+
+#### Checkpoint
+
+You should see the Companion Workbench window with a navigation tree on the left side. The tree may be mostly empty — that's fine, you haven't created any companions yet. You should also be able to open a terminal session and interact with Claude.
+
+If the app asked you to choose a directory and then nothing happened, try closing and reopening the app. If you see an error message, double-check that you selected the `project-creator` folder (not the `Documents` folder itself).
+
+---
+
+### Phase 4: Knowledge Workbench
+
+The Knowledge Workbench is a desktop app for browsing your knowledge library — rendered markdown, PDFs, diagrams, and more.
+
+#### 4a. Download and Install
+
+<details>
+<summary><strong>macOS</strong></summary>
+
+1. Download the Knowledge Workbench installer: **[Knowledge Workbench for macOS](https://github.com/Consortium-team/project-creator/releases/download/knowledge-workbench-v1.0.1/Knowledge.Workbench-1.0.1-arm64.dmg)**
+
+   > **Older Mac?** Same as Companion Workbench — if your Mac is from before 2020, check the [releases page](https://github.com/Consortium-team/project-creator/releases) for an x64 build.
+
+2. Double-click the downloaded `.dmg` file to open it.
+
+3. **Drag the Knowledge Workbench icon onto the Applications folder**, just like you did with Companion Workbench.
+
+4. Close the installer window.
+
+5. Open the app: find **Knowledge Workbench** in your Applications folder, **right-click it**, and select **Open**. Click **Open** again if prompted.
+
+   > Just like Companion Workbench, you only need to right-click the first time.
+
+</details>
+
+<details>
+<summary><strong>Windows</strong></summary>
+
+1. Download the Knowledge Workbench installer: **[Knowledge Workbench for Windows](https://github.com/Consortium-team/project-creator/releases/download/knowledge-workbench-v1.0.1/Knowledge.Workbench-1.0.1-x64-setup.exe)**
+
+2. Double-click the downloaded `.exe` file to run it.
+
+3. **If SmartScreen appears**, click **More info** then **Run anyway** (same as Companion Workbench).
+
+4. Follow the installer prompts — defaults are fine.
+
+5. The app should launch automatically. If not, find **Knowledge Workbench** in your Start menu.
+
+</details>
+
+#### Checkpoint
+
+Knowledge Workbench should open and show your project-creator directory contents in the navigation tree. It automatically finds your Project Creator directory using the configuration that Companion Workbench created in Phase 3.
+
+If you see an error about not finding the Project Creator directory, make sure Companion Workbench (Phase 3) is fully set up and was opened at least once.
+
+---
+
+### Phase 5: Knowledge Explorer
+
+The Knowledge Explorer is a companion that runs inside Knowledge Workbench. It gives Knowledge Workbench the ability to process and organize your knowledge library using Claude.
+
+#### 5a. Set Up Knowledge Domains
+
+First, tell Knowledge Workbench where your knowledge files live. You'll add the knowledge directory you created in Phase 2.
+
+1. In Knowledge Workbench, look for a **"+"** button or **domain management** area in the navigation tree on the left
+2. Add a new domain:
+   - **Name:** `knowledge`
+   - **Directory:** navigate to your **Documents** folder and select the **knowledge** folder you created in Phase 2
+
+#### 5b. Download Knowledge Explorer
+
+1. Open Knowledge Workbench (if it isn't already open).
+
+2. Look in the right panel where the terminal would normally be. Instead of a terminal, you'll see **instructions for downloading the Knowledge Explorer**, including a command you need to copy and paste.
+
+3. Open your regular terminal (Terminal on macOS, Git Bash on Windows — the same one you used in Phase 1).
+
+4. Copy the command from the Knowledge Workbench instructions, paste it into your regular terminal, and press Enter. Git will download the Knowledge Explorer.
+
+5. Go back to Knowledge Workbench. You may need to **close and reopen it** for the Knowledge Explorer to appear. After reopening, you should see the right panel now has the ability to open a terminal session.
+
+#### 5c. Configure Knowledge Explorer
+
+1. In Knowledge Workbench, open a terminal session in the right panel
+2. Type the following and press Enter:
+
+```
+/configure
+```
+
+3. The Knowledge Explorer will ask you some setup questions. Follow the prompts — when it asks if the knowledge directory should be used as the write target, type **yes** and press Enter.
+
+#### Checkpoint
+
+You should be able to:
+- See folders in the navigation tree on the left
+- Click a markdown file and see it rendered (formatted) in the middle pane
+- Open a terminal session in the right pane
+
+If the terminal shows "command not found" or won't start, go back to Phase 1 step 1.3 and make sure the Claude Code `echo` step was completed and you opened a new terminal window afterward.
+
+---
+
+## Quick Start: Using Claude Cowork Tasks
+
+We recommend Cowork tasks for the conversational phases (gathering requirements, planning) and Claude Code for the build phase. Cowork's conversational interface is well-suited for the back-and-forth of requirements gathering.
+
+### Setting Up a Cowork Task
 
 1. When creating a Cowork task, click the button to set working folders
 2. Set the working folder to your `project-creator` directory
 
 ### Starting a Companion
 
-Your first message should tell Claude to orient itself as the project creator. Without this, Claude won't know about the local skills, agents, and rules — and will make up its own versions when you reference them later.
+Your first message should tell Claude to orient itself as the project creator:
 
-**Example opening prompt:**
+> We're going to be creating a companion project. First, let's make sure you've set yourself up as the project creator. Look at the `CLAUDE.md` in this working directory and make sure you understand it. Then look in the `.claude` folder so you see the local commands, agents, and skills available for you to use.
 
-> We're going to be creating another writing companion project. First, let's make sure you've set yourself up as the project creator. Look at the `CLAUDE.md` in this working directory and make sure you understand it. Then look in the `.claude` folder so you see the local commands, agents, and skills available for you to use.
-
-The key elements are:
+The key elements:
 - **State what you're doing** — Give Claude the high-level goal
-- **Direct it to read `CLAUDE.md`** — This is the project configuration that defines how Project Creator works
-- **Direct it to read the `.claude` folder** — This is where skills (`/intake`, `/plan`, `/build`, etc.), agents, and rules live
+- **Direct it to read `CLAUDE.md`** — This is the project configuration
+- **Direct it to read `.claude/`** — This is where skills, agents, and rules live
 
 After Claude confirms it has oriented itself, you can use commands normally.
 
-**Example follow-up prompt (creating a companion):**
+### Example Workflow
 
-> Run the `/companion` command to create a new companion in `consortium.team` and call it `writing-companion-sonjaya`.
+**Create a companion:**
+> Run the `/companion` command to create a new companion in `my-org` and call it `my-first-companion`.
 
-**Example follow-up prompt (providing context before intake):**
+**Start the intake conversation:**
+> Please run the `/intake` command.
 
-> Now to give you a little context before we do the intake command. The very first writing companion we created was called `the-sorrow`. Then I met with a friend who was interested in testing the experience, so we created `writing-companion-[friend name]` for him. We also thought about productizing the experience, which is what `writing-companion-pm` is about — but you can ignore that one for this project since it's about productization rather than creating a new writing companion for a specific person.
->
-> Even though I have the writing companion called `the-sorrow`, that was my first take at it. I want to re-intake myself where we can use `the-sorrow` as context, but apply the learnings from when we created `writing-companion-[friend name]` and the learnings from abstracting that into the writing companion project type.
->
-> Please run the command: `/intake writing-companion`
+Claude will ask you questions one at a time to understand what you want your companion to do. Answer naturally — don't worry about structure.
 
-This example shows an important pattern: **give Claude the lay of the land before running a command**. By explaining which prior companions exist, how they relate, and what you want to carry forward vs. ignore, you get a much more informed intake conversation.
-
-**Example follow-up prompt (checking progress):**
-
+**Check progress:**
 > Run the `/gaps` command and see how we're doing.
 
-**Example follow-up prompt (running the plan):**
-
+**Create the plan:**
 > Please run the `/plan` command. I'm not saying do the things that you think the plan should do — actually run the command so that we're following the disciplined steps that it takes.
 
-Note the explicit instruction to run the command rather than improvise. In Cowork tasks, Claude sometimes interprets a request like "plan this" as permission to do what it thinks planning means, rather than executing the `/plan` command with its defined steps. Being direct about this avoids skipped steps.
+Note the explicit instruction to run the command. In Cowork tasks, Claude sometimes interprets a request like "plan this" as permission to improvise rather than follow the defined steps.
 
-**Running the build:**
-
-At this point, switch to Claude Code to run `/build` — it's more reliable for the build phase. If you prefer to stay in Cowork, use the same explicit form:
-
-> Please run the `/build` command. I'm not saying do the things that you think the build should do — actually run the command so that we're following the disciplined steps that it takes.
+**Run the build (switch to Claude Code for this):**
+> Please run the `/build` command.
 
 ---
 
-## Quick Start (for usage within Claude Code)
-
-### Starting a New Companion
+## Quick Start: Using Claude Code Directly
 
 ```bash
-# Point Claude Code at this directory
+# Point Claude Code at the project-creator directory
 cd project-creator
-> claude [HIT ENTER]
+claude
 
 # First time using
-/configure 
+/configure
 
 # Create a new companion
-/companion new acme-corp/api-service
+/companion new my-org/my-companion
 
 # Start the intake conversation
 /intake                         # General intake
-/intake product-manager         # Or specify a persona (see below)
+/intake product-manager         # Or specify a persona
 
 # (Answer questions as Claude draws out your requirements)
 
@@ -128,10 +610,10 @@ cd project-creator
 
 ```bash
 # Clone your existing companion into companions/
-git clone <repo-url> companions/acme-corp/existing-api
+git clone <repo-url> companions/my-org/existing-companion
 
 # Set it as current
-/companion acme-corp/existing-api
+/companion my-org/existing-companion
 
 # Analyze and fill gaps
 /onboard
@@ -141,7 +623,7 @@ git clone <repo-url> companions/acme-corp/existing-api
 
 ```bash
 # Set your companion
-/companion acme-corp/api-service
+/companion my-org/my-companion
 
 # See where you left off
 /gaps
@@ -152,6 +634,12 @@ git clone <repo-url> companions/acme-corp/existing-api
 # End session
 /checkpoint
 ```
+
+---
+
+## What's New
+
+[v2.0 — Three-Layer Architecture](docs/release-notes.md) — Companions are now more reliable and token-efficient. Instructions are distributed across a reliability hierarchy so the right guidance shows up at the right time.
 
 ---
 
@@ -178,28 +666,6 @@ flowchart TD
     S2 --> |"Process inputs, identify gaps"| C
     C --> |"Create spec & Linear tickets"| B
     B --> |"Execute with sub-agents"| done["Configured Companion"]
-```
-
----
-
-## Typical Workflow
-
-```bash
-# 1. Create or set companion
-/companion new client/companion-name
-
-# 2. Seed: Capture requirements
-/intake                    # Interactive requirements gathering
-/intake product-manager    # ...or use a persona for accelerated intake
-/process                   # Feed in existing documents
-/gaps                      # Check what's missing
-
-# 3. Cultivate: Plan the build
-/plan                      # Creates spec + Linear tickets
-# Review tickets in Linear, approve when ready
-
-# 4. Shape: Build the companion
-/build                     # Executes tickets with sub-agents
 ```
 
 ---
@@ -257,6 +723,28 @@ Execute the implementation plan with specialized sub-agents.
 - Uses `ticket-verifier` agent (Sonnet) to verify completion
 - Tracks progress in `build-progress.md`
 - Recovers from interruptions automatically
+
+---
+
+## Prerequisites for Advanced Features
+
+### Linear (for `/plan` and `/build`)
+
+Project Creator uses [Linear](https://linear.app) as the external memory for implementation plans. The Cultivation and Shaping phases require Linear MCP to be configured.
+
+1. Install the Linear MCP server in your Claude Code configuration (see [Linear MCP docs](https://linear.app/docs/mcp))
+2. Authenticate with your Linear workspace
+3. Create a Linear project for tracking Project Creator work (or use an existing one)
+
+Without Linear, you can still use the Seeding phase commands, but `/plan` and `/build` will not function.
+
+### Granola (for meeting transcripts)
+
+[Granola.ai](https://granola.ai) is an AI meeting notes tool. With the Granola MCP configured, you can feed meeting transcripts directly into Project Creator:
+
+> /process the Granola transcript from yesterday with [client name]
+
+Not required, but useful if your companion requirements live in meeting conversations. See [Granola MCP setup instructions](https://docs.granola.ai/help-center/sharing/integrations/mcp#claude-code).
 
 ---
 
@@ -352,7 +840,7 @@ Each companion in `companions/` has its own independent git repository, separate
 
 ```bash
 # Navigate to the companion
-cd companions/acme-corp/api-service
+cd companions/my-org/my-companion
 
 # Standard git workflow
 git add .
@@ -395,18 +883,13 @@ This separation ensures:
 **Examples:**
 ```
 /companion                                  # What am I working on?
-/companion acme-corp/web-app                # Switch to this companion
-/companion new startup-inc/api-refactor     # Start a new companion
+/companion my-org/web-app                   # Switch to this companion
+/companion new my-org/api-refactor          # Start a new companion
 ```
 
 ### `/configure` — First-Time Setup
 
 Sets up your Project Creator environment: default organization, Linear workspace verification, and directory structure validation. Run this once after cloning the repo.
-
-**Examples:**
-```
-/configure                                  # Interactive first-time setup
-```
 
 ### `/intake` — New Companion Reverse Prompting
 
@@ -423,7 +906,7 @@ Starts a guided conversation to capture companion requirements. Claude asks ques
 /intake                                  # General intake — conversation discovers the persona
 /intake product-manager                  # Accelerate with PM-specific questions
 /intake software-developer               # Accelerate with dev-specific questions
-/intake product-manager acme/app         # Specify persona and companion
+/intake product-manager my-org/app       # Specify persona and companion
 ```
 
 Covers: **Purpose**, **Users**, **Success criteria**, **Constraints**, **Context**, and **The Quality** (what makes this companion distinct). Captured information is written to `[companion]/context/` files.
@@ -451,16 +934,6 @@ For companions that already exist. Analyzes what's there and fills gaps through 
 | `/onboard` | Analyze current companion |
 | `/onboard [client/companion]` | Analyze a specific companion |
 
-**Examples:**
-```
-/onboard                                 # Analyze current companion
-/onboard acme-corp/existing-api          # Analyze a specific companion
-```
-
-Claude analyzes existing files (CLAUDE.md, README, skills, etc.), reports what's FOUND vs MISSING, asks before filling gaps, and uses reverse prompting to capture what's missing.
-
-**Prerequisite:** Clone/copy the companion into `companions/[client]/[name]/` first.
-
 ### `/process` — Handle External Inputs
 
 Feed in transcripts, documents, or notes. Claude extracts requirements, constraints, decisions, and questions, then updates companion context files.
@@ -470,43 +943,13 @@ Feed in transcripts, documents, or notes. Claude extracts requirements, constrai
 | `/process` | Prompts for input, uses current companion |
 | `/process [client/companion]` | Override companion, then prompts for input |
 
-**Examples:**
-```
-/process                                 # Then paste text or give a file path
-/process acme-corp/api-service           # Override companion, then paste input
-```
-
-After invoking, paste text directly or provide a file path when prompted.
-
 ### `/gaps` — Assessment
 
 Checks captured context against what's needed for a complete companion definition. Reports gaps with priorities and suggests what to capture next.
 
-| Usage | What It Does |
-|-------|--------------|
-| `/gaps` | Assess current companion |
-| `/gaps [client/companion]` | Assess a specific companion |
-
-**Examples:**
-```
-/gaps                                    # How complete is the current companion?
-/gaps acme-corp/api-service              # Check a specific companion
-```
-
 ### `/checkpoint` — Session Capture
 
 Run before ending a session to preserve progress across context boundaries.
-
-| Usage | What It Does |
-|-------|--------------|
-| `/checkpoint` | Capture state for current companion |
-| `/checkpoint [client/companion]` | Capture state for a specific companion |
-
-**Examples:**
-```
-/checkpoint                              # Save before ending session
-/checkpoint acme-corp/api-service        # Save a specific companion's state
-```
 
 ### `/read-book` — Read and Annotate a Book
 
@@ -515,17 +958,8 @@ Reads a book through Kindle Cloud Reader, taking structured notes in batches of 
 | Usage | What It Does |
 |-------|--------------|
 | `/read-book [kindle-url]` | Read for current companion (companion mode) |
-| `/read-book [kindle-url] [client/companion]` | Read for a specific companion |
 | `/read-book --library [org] [kindle-url]` | Read to org library (library mode) |
 | `/read-book --library [org] [subject] [kindle-url]` | Library mode with subject category |
-
-**Examples:**
-```
-/read-book https://read.amazon.com/?asin=B00RLQXBYS
-/read-book https://read.amazon.com/?asin=B00RLQXBYS acme/companion
-/read-book --library consortium.team https://read.amazon.com/?asin=B00RLQXBYS
-/read-book --library consortium.team creative-writing https://read.amazon.com/?asin=B00RLQXBYS
-```
 
 - **Companion mode** writes to `[companion]/reference/`
 - **Library mode** writes to `companion-kits/private-kits/[org]-companion-kit/library/[subject]/[book]/`
@@ -534,24 +968,12 @@ Reads a book through Kindle Cloud Reader, taking structured notes in batches of 
 
 ### `/contextualize` — Generate Companion Reference from Library Notes
 
-Takes existing companion-neutral library notes and generates a reference file tailored to a specific companion — without re-reading the book. Processes chapter by chapter with user pacing.
+Takes existing companion-neutral library notes and generates a reference file tailored to a specific companion — without re-reading the book.
 
 | Usage | What It Does |
 |-------|--------------|
 | `/contextualize [search-term]` | Find book in org library, contextualize for current companion |
 | `/contextualize [search-term] [client/companion]` | Override companion |
-
-**Examples:**
-```
-/contextualize king                                    # Finds king-on-writing in library
-/contextualize story-structure                         # Match by subject tag
-/contextualize king consortium.team/writing-companion  # Override companion
-```
-
-- Searches the org library by directory name, title, author, or subject tags
-- Filters and reframes concepts for the companion's specific needs
-- Records what was filtered out and why (reviewable)
-- Only works with books that have `complete` or `in-progress` status
 
 ### `/plan` — Create Implementation Plan
 
@@ -610,26 +1032,9 @@ project-creator/
 │           └── library/         # Book notes by subject
 ├── .claude/
 │   ├── skills/                  # All workflow skills
-│   │   ├── companion-standards/ # Reference skill (preloaded into agents)
-│   │   ├── companion/           # Manage companion context
-│   │   ├── configure/           # First-run setup
-│   │   ├── intake/              # Reverse prompting for new companions
-│   │   ├── onboard/             # Analyze existing companions
-│   │   ├── process/             # Handle external inputs
-│   │   ├── gaps/                # Assessment checkpoint
-│   │   ├── checkpoint/          # Session capture
-│   │   ├── read-book/           # Kindle Cloud Reader integration
-│   │   ├── contextualize/       # Library-to-companion reference
-│   │   ├── plan/                # Cultivation phase
-│   │   └── build/               # Shaping phase
-│   ├── agents/
-│   │   ├── ticket-executor.md
-│   │   ├── ticket-verifier.md
-│   │   ├── companion-auditor.md
-│   │   └── project-analyzer.md
+│   ├── agents/                  # Sub-agents for /build
 │   ├── rules/                   # Path-scoped conventions
 │   └── hooks/                   # Session rules
-├── templates/                   # Companion archetypes (emerges over time)
 ├── docs/                        # Documentation and guides
 └── companions/                  # Companion working directories (git-ignored)
     └── [client]/
@@ -696,7 +1101,7 @@ companions/client/companion/
 
 2. **It's okay to not know** — "I'm not sure yet" is a valid answer. It helps identify gaps.
 
-3. **Use `/process` liberally** — Meeting transcripts, slack conversations, existing docs — feed them in.
+3. **Use `/process` liberally** — Meeting transcripts, Slack conversations, existing docs — feed them in.
 
 4. **Run `/gaps` often** — It shows you where you are and what's next.
 
@@ -714,11 +1119,7 @@ companions/client/companion/
 
 ---
 
-## Companion Architecture
-
-Project Creator builds companions by composing reusable components: **personas** (the "who"), **capabilities** (the "what"), and **library materials** (domain knowledge). When you've built a particular kind of companion enough times, the patterns get extracted into a persona with specialized intake questions, proven directory structures, and reference implementations.
-
-### Personas
+## Personas
 
 A persona defines the companion's identity, voice, and domain expertise. Each persona contains:
 
@@ -779,10 +1180,8 @@ Personas emerge from successful companions. When a companion pattern has been us
 
 ### A Note on Reference Projects
 
-Each persona includes a `reference-projects.md` that documents successful implementations — configuration choices, key decisions, what worked, files worth studying. These are enormously helpful for accelerating future companions of the same type.
+Each persona includes a `reference-projects.md` that documents successful implementations. These are enormously helpful for accelerating future companions of the same type.
 
-However, reference projects point to actual companion paths in your `companions/` directory, which is private and git-ignored. So `reference-projects.md` is also git-ignored for public personas — it wouldn't be useful to someone who doesn't have your companions.
+However, reference projects point to actual companion paths in your `companions/` directory, which is private and git-ignored. So `reference-projects.md` is also git-ignored for public personas.
 
-**The good news:** `/build` automatically updates `reference-projects.md` after completing a build for any companion that was created from a persona. You don't need to do anything — each successful build adds itself as a reference for the next companion of that type.
-
-When you clone this repo or start using a public persona for the first time, you won't have a `reference-projects.md` yet. That's fine — the persona works without it. Your first `/build` will create it.
+`/build` automatically updates `reference-projects.md` after completing a build for any companion that was created from a persona. Each successful build adds itself as a reference for the next companion of that type.
